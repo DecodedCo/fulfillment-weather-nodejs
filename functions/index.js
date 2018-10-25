@@ -16,6 +16,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const http = require('http');
+
 const host = 'api.worldweatheronline.com';
 const wwoApiKey = '<ENTER_WWO_API_KEY_HERE>';
 
@@ -25,7 +27,7 @@ app.use(bodyParser.json());
 
 app.post("/", (req, res) => {
   // Get the city and date from the request
-  let city = req.body.queryResult.parameters['geo-city']; // city is a required param
+  let city = req.body.queryResult.parameters['geo-city'] || 'Sao Paulo'; // city is a required param
 
   // Get the date for the weather forecast (if present)
   let date = '';
@@ -37,8 +39,9 @@ app.post("/", (req, res) => {
   // Call the weather API
   callWeatherApi(city, date).then((output) => {
     res.json({ 'fulfillmentText': output }); // Return the results of the weather API to Dialogflow
-  }).catch(() => {
-    res.json({ 'fulfillmentText': `I don't know the weather but I hope it's good!` });
+  }).catch((e) => {
+    console.log(e)
+    res.json({ 'fulfillmentText': `I don't know the weather but I hope it's good! Error: ${e}` });
   });
 });
 
