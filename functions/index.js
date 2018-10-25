@@ -13,13 +13,17 @@
 
 'use strict';
 
-const http = require('http');
-const functions = require('firebase-functions');
+const express = require("express");
+const bodyParser = require("body-parser");
 
 const host = 'api.worldweatheronline.com';
 const wwoApiKey = '<ENTER_WWO_API_KEY_HERE>';
 
-exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => {
+let app = express();
+
+app.use(bodyParser.json());
+
+app.post("/", (req, res) => {
   // Get the city and date from the request
   let city = req.body.queryResult.parameters['geo-city']; // city is a required param
 
@@ -58,10 +62,10 @@ function callWeatherApi (city, date) {
         let currentConditions = conditions['weatherDesc'][0]['value'];
 
         // Create response
-        let output = `Current conditions in the ${location['type']} 
+        let output = `Current conditions in the ${location['type']}
         ${location['query']} are ${currentConditions} with a projected high of
-        ${forecast['maxtempC']}°C or ${forecast['maxtempF']}°F and a low of 
-        ${forecast['mintempC']}°C or ${forecast['mintempF']}°F on 
+        ${forecast['maxtempC']}°C or ${forecast['maxtempF']}°F and a low of
+        ${forecast['mintempC']}°C or ${forecast['mintempF']}°F on
         ${forecast['date']}.`;
 
         // Resolve the promise with the output text
@@ -75,3 +79,8 @@ function callWeatherApi (city, date) {
     });
   });
 }
+
+app.set("port", process.env.PORT || 5000);
+app.listen(app.get("port"), () => {
+  console.log(`WEATHER is online at http://localhost:${app.get("port")}`);
+});
