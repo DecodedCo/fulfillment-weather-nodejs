@@ -19,7 +19,7 @@ const bodyParser = require("body-parser");
 const http = require('http');
 
 const host = 'api.worldweatheronline.com';
-const wwoApiKey = '<ENTER_WWO_API_KEY_HERE>';
+const wwoApiKey = '90f7694afaf7496a938123841182510';
 
 let app = express();
 
